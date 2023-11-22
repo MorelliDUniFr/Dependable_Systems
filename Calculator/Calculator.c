@@ -1,15 +1,16 @@
 #include <stdio.h>
+#include <stdlib.h>
 
-const char PLUS = '+';
-const char MINUS = '-';
-const char MULTIPLY = '*';
-const char DIVIDE = '/';
-const char SQUARE = '^';
-const char PRIME = 'f';
-const char FACTORIAL = '!';
-const char EXIT = 'e';
-const char ROOT = 'r';
-const char LOG = 'l';
+#define PLUS '+'
+#define MINUS '-'
+#define MULTIPLY '*'
+#define DIVIDE '/'
+#define SQUARE '^'
+#define PRIME 'f'
+#define FACTORIAL '!'
+#define EXIT 'e'
+#define ROOT 'r'
+#define LOG 'l'
 
 /*@
     ensures \result - b == a;
@@ -72,7 +73,7 @@ int mul(int a, int b) {
     ensures a == 0 ==> \result == 0;
     assigns \nothing;
  */
-int div(int a, int b) {
+int divs(int a, int b) {
     int res;
     res = a / b;
     return res;
@@ -83,91 +84,95 @@ int div(int a, int b) {
     requires base >= 0;
     //ensures \result == base ^ exp;
     ensures exp == 0 ==> \result == 1;
-    //ensures exp == 1 ==> \result == base;
-    //ensures (exp % 2) == 0 ==> \result > 0;
-    //ensures (exp % 2) == 1 ==> \result < 0;
+    ensures exp == 1 ==> \result == base;
     assigns \nothing;
  */
 int sqr(int base, int exp) {
     int i, res = 1;
 
+    if (exp == 0)
+        return 1;
+    else if (exp == 1)
+        return base;
+
+    /*@
+        loop invariant 0 <= i <= exp;
+        loop assigns i, res;
+        loop variant exp - i;
+     */
     for (i = 0; i < exp; ++i)
         res *= base;
 
     return res;
 }
 
-
-
-void prime_factorization() {
-    int n = 0;
-    while (n < 2) {
-        printf("Input a number : ");
-        scanf("%d", &n);
-    }
-
-    int p = 2;
-    int primes[20];
-    int index = 0;
-    int i;
-
-    while (1 != n) {
-        if (0 == (n % p)) {
-            n = n / p;
-            primes[index] = p;
-            ++index;
-            p = 2;
-        } else {
-            ++p;
-        }
-    }
-
-    if (1 == index) {
-        printf("Prime number\n");
-    } else {
-        for (i = 0; i < index - 1; ++i)
-            printf("%d*", primes[i]);
-
-        printf("%d\n", primes[i]);
-    }
-}
-
+/*@
+    requires b >= 0;
+    ensures b == 0 ==> \result == 1;
+    ensures b == 1 ==> \result == 1;
+    assigns \nothing;
+ */
 int factorial(int b) {
     int a;
     int sum = 1;
 
+    if (b == 0 || b == 1) {
+        return 1;
+    }
+
+    /*@
+        loop invariant 1 <= a <= b + 1;
+        loop assigns a, sum;
+        loop variant b - a;
+     */
     for (a = 1; a <= b; ++a)
         sum *= a;
 
     return sum;
 }
 
+int* prime_factorization(int n) {
+    int p = 2;
+    int* primes = (int*)malloc(20 * sizeof(int));
+    int index;
+
+    for (index = 0; n != 1; ++index) {
+        if ((n % p) == 0) {
+            n /= p;
+            primes[index] = p;
+            p = 2;
+        } else {
+            --index;
+            ++p;
+        }
+    }
+
+    return primes;
+}
+
 int root(int radicand, int index) {
     int res = radicand / 2;
+    double t1 = (1.0 / index);
 
     for (int i = 0; i < 1000; ++i) {
-        res = (1 / index) * ((index - 1) * res + radicand / sqr(res, index - 1));
+        res = t1 * ((index - 1.0) * res + radicand / sqr(res, index - 1));
     }
 
     return res;
 }
 
 int log(int base, int n) {
-    int res = 0;
+    int res;
 
-    while (n > 0) {
+    for (res = 0; n > 0; ++res) {
         n /= base;
-        res++;
     }
 
-    res--;
-
-    return res;
+    return res - 1;
 }
 
 void sel_func(char s) {
     int res = 0;
-    printf("Selected : %c\n", s);
 
     switch (s) {
         case PLUS: {
@@ -195,7 +200,7 @@ void sel_func(char s) {
             int a, b;
             printf("Input two numbers : ");
             scanf("%d%d", &a, &b);
-            res = div(a, b);
+            res = divs(a, b);
             break;
         }
         case SQUARE: {
@@ -208,7 +213,31 @@ void sel_func(char s) {
             break;
         }
         case PRIME: {
-            prime_factorization();
+            int n = 0;
+            while (n < 2) {
+                printf("Input a number : ");
+                scanf("%d", &n);
+            }
+            int* myArray = prime_factorization(n);
+            int i;
+
+            for (i = 0; i < 19; ++i) {
+                if (myArray[i + 1] == 0) {
+                    if (i == 0) {
+                        printf("Prime number\n");
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+                printf("%d*", myArray[i]);
+            }
+
+            if (i != 0) {
+                printf("%d\n", myArray[i]);
+            }
+
+            free(myArray);
             break;
         }
         case FACTORIAL: {
@@ -252,9 +281,7 @@ int main(void) {
         printf("Input a number [ +, -, *, /, ^, root(r), prime factorization(f), !, log(l), exit(e)] : ");
         scanf("%c", &s);
 
-        printf("s = %c\n", s);
-
-        if(s == 'e') {
+        if(s == EXIT) {
             printf("Bye\n");
             break;
         } else {
