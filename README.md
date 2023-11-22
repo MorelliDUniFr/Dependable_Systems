@@ -6,6 +6,7 @@ The goal of this seminar is to implement a way to detect failures using Hoare Lo
 The repository contains the following folders:
 - 'Demo': Contains the code for the demo part of the seminar.
 - 'TodoList': Contains the code for the TodoList application.
+- 'Calculator': Contains the code for the Calculator application.
 
 In order to check the conditions using the Hoare Logic, we need to use the tool 'Frama-C'.
 
@@ -80,3 +81,5 @@ The program is implemented in the file 'main.c'.
 The TodoList application is a simple application that allows the user to add, remove and list tasks.
 The application is implemented in the file 'app.c'.
 
+### Calculator
+The Calculator application is a simple application that allows the user to do the basic operations.
