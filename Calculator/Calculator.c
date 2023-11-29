@@ -131,11 +131,21 @@ int factorial(int b) {
     return sum;
 }
 
+/*@
+    requires n > 1;
+    ensures \result != NULL;
+    assigns \nothing;
+*/
 int* prime_factorization(int n) {
     int p = 2;
     int* primes = (int*)malloc(20 * sizeof(int));
     int index;
 
+    /*@
+        loop invariant n != 1;
+        loop invariant 0 <= index <= 19;
+        loop assigns n, p, primes[0..19], index;
+    */
     for (index = 0; n != 1; ++index) {
         if ((n % p) == 0) {
             n /= p;
@@ -150,10 +160,22 @@ int* prime_factorization(int n) {
     return primes;
 }
 
+/*@
+    requires radicand >= 0;
+    //requires index >= 1;
+    //ensures \result >= 0;
+    //ensures index == 1 ==> \result == radicand;
+    assigns \nothing;
+ */
 int root(int radicand, int index) {
     int res = radicand / 2;
     double t1 = (1.0 / index);
 
+    /*@
+        loop invariant 0 <= i <= 1000;
+        loop assigns i, res;
+        loop variant 1000 - i;
+    */
     for (int i = 0; i < 1000; ++i) {
         res = t1 * ((index - 1.0) * res + radicand / sqr(res, index - 1));
     }
