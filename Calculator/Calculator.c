@@ -183,9 +183,20 @@ int root(int radicand, int index) {
     return res;
 }
 
+/*@
+    requires base >= 1;
+    requires n >= 1;
+    ensures \result >= 0;
+    assigns \nothing;
+ */
 int log(int base, int n) {
     int res;
 
+    /*@
+        loop invariant n > 0;
+        loop assigns n, res;
+        loop variant n;
+    */
     for (res = 0; n > 0; ++res) {
         n /= base;
     }
