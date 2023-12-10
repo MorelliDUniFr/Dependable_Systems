@@ -73,6 +73,17 @@ The following commands can be used to check the conditions:
 frama-c -wp <file.c>
 ```
 
+Certain functions, like printf() or scanf(), are not supported by the tool, and give a lot of warnings.
+In order to ignore these warnings, we can use the following command:
+```bash
+// frama-c -wp -wp-skip-fct <list of functions to avoid> <file.c>
+```
+
+In this case, we can ignore the following functions:
+```bash
+frama-c -wp -wp-skip-fct "sel_func, main" Calculator.c
+```
+
 ### Demo
 The demo part of the seminar is a simple program that divides two numbers.
 The program is implemented in the file 'main.c'.

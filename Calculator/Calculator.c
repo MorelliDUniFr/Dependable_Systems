@@ -97,6 +97,7 @@ int sqr(int base, int exp) {
 
     /*@
         loop invariant 0 <= i <= exp;
+        //loop invariant res == \sqrt(base, i);
         loop assigns i, res;
         loop variant exp - i;
      */
@@ -122,6 +123,7 @@ int factorial(int b) {
 
     /*@
         loop invariant 1 <= a <= b + 1;
+        //loop invariant sum == factorial(a - 1);
         loop assigns a, sum;
         loop variant b - a;
      */
@@ -134,7 +136,7 @@ int factorial(int b) {
 /*@
     requires n > 1;
     ensures \result != NULL;
-    assigns \nothing;
+    assigns \result \from n;
 */
 int* prime_factorization(int n) {
     int p = 2;
@@ -172,11 +174,14 @@ int root(int radicand, int index) {
     double t1 = (1.0 / index);
 
     /*@
-        loop invariant 0 <= i <= 1000;
         loop assigns i, res;
+        loop invariant 0 <= i <= 1000;
         loop variant 1000 - i;
     */
+
     for (int i = 0; i < 1000; ++i) {
+        //@ assert res >= 0;
+        //@ assert index >= 1;
         res = t1 * ((index - 1.0) * res + radicand / sqr(res, index - 1));
     }
 
@@ -195,10 +200,14 @@ int log(int base, int n) {
     /*@
         loop invariant n > 0;
         loop assigns n, res;
-        loop variant n;
+        loop variant 1000 - res;
     */
-    for (res = 0; n > 0; ++res) {
+    for (res = 0; res < 1000; ++res) {
         n /= base;
+
+        if (n == 1) {
+            break;
+        }
     }
 
     return res - 1;
@@ -254,14 +263,17 @@ void sel_func(char s) {
             int* myArray = prime_factorization(n);
             int i;
 
+            if (myArray[1] == 0) {
+                printf("Prime number\n");
+                free(myArray);
+                return;
+            } else {
+                printf("Prime factorization : ");
+            }
+
             for (i = 0; i < 19; ++i) {
                 if (myArray[i + 1] == 0) {
-                    if (i == 0) {
-                        printf("Prime number\n");
-                        break;
-                    } else {
-                        break;
-                    }
+                    break;
                 }
                 printf("%d*", myArray[i]);
             }
@@ -271,7 +283,7 @@ void sel_func(char s) {
             }
 
             free(myArray);
-            break;
+            return;
         }
         case FACTORIAL: {
             int b;
@@ -311,8 +323,8 @@ int main(void) {
     char s;
 
     while(1) {
-        printf("Input a number [ +, -, *, /, ^, root(r), prime factorization(f), !, log(l), exit(e)] : ");
-        scanf("%c", &s);
+        printf("Input a number [+, -, *, /, ^, root(r), prime factorization(f), !, log(l), exit(e)] : ");
+        scanf(" %c", &s);
 
         if(s == EXIT) {
             printf("Bye\n");
