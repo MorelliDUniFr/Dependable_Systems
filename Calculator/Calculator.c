@@ -87,7 +87,7 @@ int divs(int a, int b) {
     ensures exp == 1 ==> \result == base;
     assigns \nothing;
  */
-int sqr(int base, int exp) {
+int power(int base, int exp) {
     int i, res = 1;
 
     if (exp == 0)
@@ -97,7 +97,7 @@ int sqr(int base, int exp) {
 
     /*@
         loop invariant 0 <= i <= exp;
-        //loop invariant res == \sqrt(base, i);
+        //loop invariant res == sqr(base, i);
         loop assigns i, res;
         loop variant exp - i;
      */
@@ -169,20 +169,25 @@ int* prime_factorization(int n) {
     //ensures index == 1 ==> \result == radicand;
     assigns \nothing;
  */
-int root(int radicand, int index) {
-    int res = radicand / 2;
-    double t1 = (1.0 / index);
+int root(int radicand) {
+    int res = 0;
 
     /*@
         loop assigns i, res;
-        loop invariant 0 <= i <= 1000;
-        loop variant 1000 - i;
+        loop invariant 0 <= i <= radicand/2;
+        loop variant radicand/2 - i;
+        //loop invariant res*res <= radicand;
+        //loop invariant (res + 1)*(res + 1) > radicand;
     */
-
-    for (int i = 0; i < 1000; ++i) {
-        //@ assert res >= 0;
-        //@ assert index >= 1;
-        res = t1 * ((index - 1.0) * res + radicand / sqr(res, index - 1));
+    for (int i = 0; i < radicand/2; ++i) {
+        if (i*i >= radicand) {
+            if (i*i == radicand) {
+                res = i;
+            } else {
+                res = i - 1;
+            }
+            break;
+        }
     }
 
     return res;
@@ -194,7 +199,7 @@ int root(int radicand, int index) {
     ensures \result >= 0;
     assigns \nothing;
  */
-int log(int base, int n) {
+int logs(int base, int n) {
     int res;
 
     /*@
@@ -251,7 +256,7 @@ void sel_func(char s) {
             scanf("%d", &base);
             printf("Input exp : ");
             scanf("%d", &exp);
-            res = sqr(base, exp);
+            res = power(base, exp);
             break;
         }
         case PRIME: {
@@ -296,9 +301,7 @@ void sel_func(char s) {
             int radicand, index;
             printf("Input radicand : ");
             scanf("%d", &radicand);
-            printf("Input index : ");
-            scanf("%d", &index);
-            res = root(radicand, index);
+            res = root(radicand);
             break;
         }
         case LOG: {
@@ -307,7 +310,7 @@ void sel_func(char s) {
             scanf("%d", &base);
             printf("Input n : ");
             scanf("%d", &n);
-            res = log(base, n);
+            res = logs(base, n);
             break;
         }
         default: {

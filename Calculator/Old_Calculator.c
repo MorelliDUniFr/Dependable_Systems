@@ -32,7 +32,7 @@ void divs() {
     printf("Result = %d\n", a / b);
 }
 
-void sqr() {
+void power() {
     int exp, base, i;
     int result = 1;
 
@@ -113,7 +113,7 @@ void sel_func(int s) {
             break;
         }
         case 5: {
-            sqr();
+            power();
             break;
         }
         case 6: {
