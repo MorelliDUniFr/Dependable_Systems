@@ -170,20 +170,12 @@ Multiple things are not yet implemented by the wp plugin:
 So we cannot check the conditions of the functions that use dynamic memory allocation or deallocation.
 
 ### Things not checked by me
-Out of the 247 goals, 18 are not fixed:
+Out of the 254 goals, 15 are not successful:
 1. power_assert_rte_signed_overflow_2 & power_assert_rte_signed_overflow: I fixed the overflow problem, but the runtime error is still there.
-3. typed_factorial_assert_rte_signed_overflow & typed_factorial_assert_rte_signed_overflow_2: The same thing applies here.
-5. typed_prime_factorization_assert_rte_signed_overflow_2: 
-6. typed_prime_factorization_assert_rte_mem_access: 
-7. typed_prime_factorization_assert_rte_signed_overflow_3: 
-8. typed_prime_factorization_loop_assigns_part3: 
-9. typed_root_assert_rte_signed_overflow_2: 
-10. typed_sel_func_assert_rte_signed_overflow_2: 
-11. typed_sel_func_assert_rte_signed_overflow: 
-12. typed_sel_func_assert_rte_signed_overflow_5: 
-13. typed_sel_func_assert_rte_signed_overflow_6: 
-14. typed_sel_func_assert_rte_division_by_zero: 
-15. typed_sel_func_assert_rte_signed_overflow_9: 
-16. typed_sel_func_assert_rte_signed_overflow_10:
-17. typed_sel_func_assigns_exit_part07: This problem is tied to the fact that we allocate memory dynamically, but is freed just after.
-18. typed_sel_func_assigns_normal_part07:
+2. factorial_assert_rte_signed_overflow & factorial_assert_rte_signed_overflow_2: The same thing applies here.
+3. prime_factorization_assert_rte_signed_overflow_3: Also the same things applies here. 
+4. root_assert_rte_signed_overflow_2: The overflow has been taken on account, but the runtime error is still there. 
+5. sel_func_assert_rte_signed_overflow_2 & sel_func_assert_rte_signed_overflow & sel_func_assert_rte_signed_overflow_5 & sel_func_assert_rte_signed_overflow_6 & sel_func_assert_rte_signed_overflow_9 & sel_func_assert_rte_signed_overflow_10: The same thing applies here. 
+6. sel_func_assert_rte_division_by_zero: Normally all the division by zero are checked. 
+7. sel_func_assigns_exit_part07: This problem is tied to the fact that we allocate memory dynamically, but is freed just after. 
+8. sel_func_assigns_normal_part07: The same thing applies here.

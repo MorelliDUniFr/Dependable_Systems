@@ -112,10 +112,8 @@ int divs(int a, int b) {
 }
 
 /*@
-    requires exp >= 0;
-    requires exp <= 7;
-    requires base >= 0;
-    requires base <= 21;
+    requires 0 <= exp <= 7;
+    requires 0 <= base <= 21;
     requires base != 0 || exp != 0;
     ensures exp == 0 ==> \result == 1;
     ensures exp == 1 ==> \result == base;
@@ -155,12 +153,12 @@ int power(int base, int exp) {
     requires 0 <= b <= 12;
     ensures b == 0 ==> \result == 1;
     ensures b == 1 ==> \result == 1;
-    ensures b == 12 ==> \result <= INT_MAX;
+    ensures \forall integer i; 0 <= i <= 12 ==> \result <= INT_MAX;
     ensures \result <= INT_MAX;
     assigns \nothing;
  */
 int factorial(int b) {
-    int sum = 1;
+    signed int sum = 1;
 
     if (b == 0 || b == 1) {
         return 1;
@@ -169,8 +167,8 @@ int factorial(int b) {
 
     /*@
         loop invariant 1 <= a <= b + 1;
-        loop invariant sum <= INT_MAX;
-        loop invariant sum >= INT_MIN;
+        loop invariant INT_MIN <= sum <= INT_MAX;
+        //loop invariant sum % 2 == 0;
         loop assigns a, sum;
         loop variant b - a;
      */
@@ -187,26 +185,35 @@ int factorial(int b) {
     assigns primes[0..19];
 */
 void prime_factorization(int n, int* primes) {
-    int p = 2;
-    int index = 0;
+    signed int p = 2;
+    signed int index = 0;
+    //@ assert index == 0;
 
     /*@
         loop invariant n >= 1;
         loop invariant p >= 2;
         loop invariant \forall integer i; 0 <= i < index ==> primes[i] != 0;
+        loop invariant 0 <= index <= 19;
+        loop invariant \valid(primes + (0..19));
         loop assigns n, p, index, primes[0..19];
     */
-    while(n != 1) {
+    while(n != 1 || index <= 19) {
         if ((n % p) == 0) {
             //@ assert n % p == 0;
             //@ assert p != 0;
             n /= p;
+            //@ assert \valid(primes + (0..19));
             primes[index] = p;
-            ++index;
+            if (index < 19) {
+                ++index;
+            }
             p = 2;
         } else {
+            //@ assert n % p != 0;
+            // //@ assert p < INT_MAX;
             ++p;
             //@ assert p >= 2;
+            //@ assert p <= INT_MAX;
         }
     }
     //@ assert n == 1;
@@ -216,15 +223,18 @@ void prime_factorization(int n, int* primes) {
 /*@
     requires radicand >= 0;
     requires radicand <= INT_MAX;
+    //ensures \result >= 0;
+    ensures \result <= INT_MAX;
     assigns \nothing;
  */
 int root(int radicand) {
-    int res = 0;
+    signed int res = 0;
 
     /*@
-        loop assigns i, res;
         loop invariant 0 <= i <= radicand/2;
         loop invariant res*res <= radicand;
+        loop invariant res >= 0;
+        loop assigns i, res;
         loop variant radicand/2 - i;
     */
     for (int i = 0; i < radicand/2; ++i) {
@@ -365,6 +375,7 @@ void sel_func(char s) {
         }
         case PRIME: {
             int n = 0;
+            //@ allocates primes;
             int* primes = (int*)malloc(20 * sizeof(int));
 
             /*@
@@ -386,6 +397,7 @@ void sel_func(char s) {
 
             if (primes[1] == 0) {
                 myprintf("Prime number\n");
+                //@ frees primes;
                 free(primes);
                 return;
             } else {
