@@ -168,7 +168,6 @@ int factorial(int b) {
     /*@
         loop invariant 1 <= a <= b + 1;
         loop invariant INT_MIN <= sum <= INT_MAX;
-        //loop invariant sum % 2 == 0;
         loop assigns a, sum;
         loop variant b - a;
      */
@@ -210,7 +209,6 @@ void prime_factorization(int n, int* primes) {
             p = 2;
         } else {
             //@ assert n % p != 0;
-            // //@ assert p < INT_MAX;
             ++p;
             //@ assert p >= 2;
             //@ assert p <= INT_MAX;
@@ -223,7 +221,7 @@ void prime_factorization(int n, int* primes) {
 /*@
     requires radicand >= 0;
     requires radicand <= INT_MAX;
-    //ensures \result >= 0;
+    ensures \result >= 0;
     ensures \result <= INT_MAX;
     assigns \nothing;
  */
@@ -344,6 +342,9 @@ void sel_func(char s) {
                 myprintf("Overflow\n");
                 return;
             }
+            //@ assert a / b <= INT_MAX;
+            //@ assert a / b >= INT_MIN;
+            //@ assert b != 0;
             res = divs(a, b);
             break;
         }
@@ -369,6 +370,11 @@ void sel_func(char s) {
                 myprintf("Overflow\n");
                 return;
             }
+            //@ assert base <= 21;
+            //@ assert exp <= 7;
+            //@ assert base >= 0;
+            //@ assert exp >= 0;
+            //@ assert base != 0 || exp != 0;
 
             res = power(base, exp);
             break;
@@ -392,7 +398,6 @@ void sel_func(char s) {
                 return;
             }
             prime_factorization(n, primes);
-            // //@ assert \valid(myArray + (0..19));
             int i;
 
             if (primes[1] == 0) {
@@ -420,6 +425,7 @@ void sel_func(char s) {
                 myprintf("%d\n", primes[i]);
             }
 
+            //@ frees primes;
             free(primes);
             return;
         }
@@ -431,6 +437,8 @@ void sel_func(char s) {
                 myprintf("Input a number 0 <= n <= 12\n");
                 return;
             }
+            //@ assert b >= 0;
+            //@ assert b <= 12;
             res = factorial(b);
             break;
         }
@@ -446,6 +454,8 @@ void sel_func(char s) {
                 myprintf("Input radicand <= INT_MAX\n");
                 return;
             }
+            //@ assert radicand >= 0;
+            //@ assert radicand <= INT_MAX;
             res = root(radicand);
             break;
         }
@@ -463,6 +473,11 @@ void sel_func(char s) {
                 myprintf("Input n >= 1\n");
                 return;
             }
+            //@ assert base >= 1;
+            //@ assert n >= 1;
+            //@ assert base <= INT_MAX;
+            //@ assert n <= INT_MAX;
+            //@ assert base != 0;
             res = logs(base, n);
             break;
         }
@@ -498,6 +513,7 @@ int main(void) {
                 myprintf("Please input again\n");
                 continue;
             } else {
+                //@ assert s != EXIT;
                 sel_func(s);
             }
         }

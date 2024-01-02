@@ -170,7 +170,7 @@ Multiple things are not yet implemented by the wp plugin:
 So we cannot check the conditions of the functions that use dynamic memory allocation or deallocation.
 
 ### Things not checked by me
-Out of the 254 goals, 15 are not successful:
+Out of the 273 goals, 15 are not successful:
 1. power_assert_rte_signed_overflow_2 & power_assert_rte_signed_overflow: I fixed the overflow problem, but the runtime error is still there.
 2. factorial_assert_rte_signed_overflow & factorial_assert_rte_signed_overflow_2: The same thing applies here.
 3. prime_factorization_assert_rte_signed_overflow_3: Also the same things applies here. 
